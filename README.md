@@ -1,6 +1,10 @@
 # ProTeUS: A Spatio-Temporal Enhanced Ultrasound-Based Framework for Prostate Cancer Detection  
 **MICCAI 2025**
 
+
+This repository is the **official implementation** of the MICCAI 2025 paper:  
+[**ProTeUS: A Spatio-Temporal Enhanced Ultrasound-Based Framework for Prostate Cancer Detection**](https://link.springer.com/chapter/10.1007/978-3-032-04984-1_39) (Springer LNCS).
+
 ![proteus](assets/pipeline.png)
 
 ---
