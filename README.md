@@ -59,7 +59,7 @@ the limitations posed by weak labels, achieving state-of-the-art PCa detection p
 
 ### 1) Clone the repo
 ```
-git clone https://github.com/your-org/ProTeUS.git
+git clone https://github.com/DeepRCL/ProTeUS.git
 cd ProTeUS
  ```
 
