@@ -1,0 +1,71 @@
+seed: 0
+debug: false
+
+mode: proteus-conloss
+exp_name: proteus-conloss
+checkpoint_dir: outputs/checkpoints
+
+wandb:
+  name: proteus-run-fold=${data.fold}
+  project: proteus
+  group:
+  tags: []
+  log_images: true
+
+data:
+  batch_size: 1
+  image_size: 1024
+  use_augmentations: true
+  centers:
+    - CENTER_A
+    - CENTER_B
+  frame_to_use: random
+  kfold: true
+  fold: 2
+  num_folds: 1
+  undersampling: false
+  oversampling: false
+  sampling_ratio: 1
+
+architecture:
+  sam_backbone: medsam
+  freeze_image_encoder: false
+  freeze_mask_decoder: false
+
+training:
+  num_epochs: 30
+  lr: 1e-5
+  optimizer: adamw
+  scheduler: cosine
+  pretrained: true
+  from_ckpt:
+  loss_func: masked_ce
+  using_mask:
+    - needle
+
+optimizer:
+  name: adamw
+  encoder_lr: 1e-05
+  main_lr: 1e-05
+  wd: 0.0
+  encoder_frozen_epochs: 0
+  encoder_warmup_epochs: 5
+  main_frozen_epochs: 0
+  main_warmup_epochs: 5
+
+loss:
+  consistency_mode: inv_aware_single
+  loss_pos_weight: 1.0
+  prostate_mask: true
+  needle_mask: true
+  weak_factor: 0.5
+  strong_factor: 0.5
+  accumulate_grad_steps: true
+  inv_label_smoothing: false
+  smoothing_factor: 0.2
+
+augmentations:
+  - translate
+
+device: cuda
+use_amp: false

@@ -1,0 +1,81 @@
+seed: 0
+debug: false
+
+mode: medsam-invoLS
+exp_name: medsam-invoLS
+checkpoint_dir: /checkpoint/harmanan/${slurm_job_id}
+
+wandb:
+  name: ${exp_name}_fold=${data.fold}_slurmid=${slurm_job_id}
+  project: BK-Found
+  group: medsam_invoLS
+  tags: 
+  log_images: true
+
+data:
+  batch_size: 1
+  image_size: 1024
+  use_augmentations: true
+  centers: 
+    - QUEENS
+    - UBC
+  frame_to_use: last_frame
+  involvement_smoothing: true
+  smoothing_function: gaussian
+  
+  kfold: true
+  fold: 0
+  num_folds: 5
+
+  undersampling: false
+  oversampling: false
+  sampling_ratio: 1 
+
+architecture:
+  sam_backbone: medsam
+  freeze_image_encoder: false
+  freeze_mask_decoder: false
+
+training:
+  num_epochs: 30
+  lr: 1e-05
+  optimizer: adamw
+  scheduler: cosine
+  pretrained: true
+  from_ckpt: null
+  loss_func: inv_mse
+  using_mask: 
+    - needle
+
+optimizer:
+  name: adamw
+  encoder_lr: 1e-05
+  main_lr: 1e-05
+  wd: 0 # weight decay
+  encoder_frozen_epochs: 0
+  encoder_warmup_epochs: 5
+  main_frozen_epochs: 0
+  main_warmup_epochs: 5
+
+
+loss:
+  base_loss: inv_ce
+  loss_pos_weight: 1.0
+  prostate_mask: true
+  needle_mask: true
+  accumulate_grad_steps: true
+  inv_label_smoothing: true
+  smoothing_factor: 0.2
+
+augmentations:
+  - translate
+
+slurm:
+  mem: 32G
+  gres: gpu:a40:1
+  cpus: 8
+  qos: m2
+  time: 8:00:00
+
+device: cuda
+use_amp: false

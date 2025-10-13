@@ -30,29 +30,49 @@ the limitations posed by weak labels, achieving state-of-the-art PCa detection p
 
 
 
-## Repository Map
+## Repository Structure
 
-├── src/ \
-│ ├── train_proteus.py # ProTeUS training loop \
-│ ├── train_unet.py # UNet baselines  \
-│ ├── train_medsam.py # MedSAM baselines  \ 
-│ ├── helpers/  \
-│ │ ├── loss.py # iMSE/iMAE/CE/GCE/OBP + wrappers  \ 
-│ │ └── masked_predictions.py# region-masked pooling  \
-│ ├── models/  \ 
-│ │ └── proteus.py # ProTeUS  (MedSAM backbone)  \
-│ │ └── unet.py # UNet  \
-│ │ └── inception_1d.py # InceptionTime  \
-│ │ └── sam.py # SAM  \
-│ └── utils.py # metrics & plotting  \
-├── medAI/  \
-│ └── datasets/  \
-│ ├── data_bk.py # dataloaders  \
-│ └── transforms.py # geometric + ultrasound-style augs  \
-│ └── data_utils.py # tables, splits,  \
-├── docs/assets/ # place paper figures here (PNGs)  \
-├── requirements.txt  \
-└── README.md  \
+```
+ProTeUS/
+├── src/                                    # Main source code
+│   ├── train_proteus.py                   # ProTeUS training loop
+│   ├── train_unet.py                      # UNet baselines
+│   ├── train_medsam.py                    # MedSAM baselines
+│   ├── train_sam.py                       # SAM baselines
+│   ├── helpers/                           # Helper modules
+│   │   ├── loss.py                        # iMSE/iMAE/CE/GCE/OBP + wrappers
+│   │   └── masked_predictions.py          # Region-masked pooling
+│   ├── models/                            # Model implementations
+│   │   ├── proteus.py                     # ProTeUS (MedSAM backbone)
+│   │   ├── unet.py                        # UNet
+│   │   ├── inception_1d.py                # InceptionTime
+│   │   └── sam.py                         # SAM
+│   └── utils.py                           # Metrics & plotting
+├── medAI/                                 # Medical AI utilities
+│   ├── datasets/                          # Data handling
+│   │   ├── data_bk.py                     # Dataloaders
+│   │   ├── transforms.py                  # Geometric + ultrasound-style augs
+│   │   └── data_utils.py                  # Tables, splits
+│   ├── layers/                            # Custom layers
+│   ├── modeling/                          # Model components
+│   └── utils/                             # Utility functions
+├── config/                                # Configuration files
+│   ├── proteus.yaml                       # Main ProTeUS config
+│   ├── medsam_*.yaml                      # MedSAM variants
+│   ├── sam_*.yaml                         # SAM variants
+│   └── unet_*.yaml                        # UNet variants
+├── assets/                                # Paper figures and diagrams
+│   ├── pipeline.png                       # Method overview
+│   ├── progressive_strategy.png           # Training strategy
+│   ├── quantitative_results.png           # Performance metrics
+│   └── color_accessible_qualitative_results.png  # Qualitative results
+├── ckpt/                                  # Model checkpoints (gitignored)
+├── requirements.txt                       # Python dependencies
+├── setup.py                              # Package installation
+├── run.py                                # Main training script
+├── run.sh                                # Shell script runner
+└── README.md                             # This file
+```
 
 
 ## Installation
@@ -77,17 +97,42 @@ python3 -m venv .venv
 source .venv/bin/activate    # (Windows: .venv\Scripts\activate)
 ```
 ### 3) Install PyTorch first (pick the line that matches your CUDA/CPU setup)
-CUDA 12.1:
-`pip install --index-url https://download.pytorch.org/whl/cu121 torch torchvision torchaudio`
 
- CUDA 11.8:
-`pip install --index-url https://download.pytorch.org/whl/cu118 torch torchvision torchaudio`
+**CUDA 12.1:**
+```bash
+pip install --index-url https://download.pytorch.org/whl/cu121 torch torchvision torchaudio
+```
 
-CPU only:
-`pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision torchaudio`
+**CUDA 11.8:**
+```bash
+pip install --index-url https://download.pytorch.org/whl/cu118 torch torchvision torchaudio
+```
+
+**CPU only:**
+```bash
+pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision torchaudio
+```
 
 #### 4) Install this project (uses setup.py)
 `pip install -e .`
+
+### 5) Set up environment variables
+
+ProTeUS requires several environment variables to be set for data and model paths:
+
+```bash
+# Data directories for different centers
+export BK_DATA_CORES_UBC_DIR="/path/to/ubc/cores"
+export BK_RF_SIGNAL_DIR="/path/to/rf/signals"
+export BK_OTHERCORES_INFO_DIR="/path/to/other/cores/info"
+
+# Directory containing model checkpoints
+export CHECKPOINT_DIR="/path/to/checkpoints"
+```
+
+The checkpoint directory should contain:
+- `sam_vit_b_01ec64.pth` - SAM ViT-B checkpoint
+- `medsam_vit_b.pth` - MedSAM checkpoint
 
 ## Data Assumptions
 
